@@ -1,0 +1,133 @@
+---
+- name: validate parameters
+  ansible.builtin.assert:
+    that:
+      - vpn_gateway_openvpn_client_name is string
+      - vpn_gateway_openvpn_client_remote is string
+      - vpn_gateway_openvpn_client_x509_name is string
+      - vpn_gateway_openvpn_client_tenant is string
+      - vpn_gateway_openvpn_client_rg is string
+      - vpn_gateway_openvpn_client_zone_name is string
+      - vpn_gateway_openvpn_client_sp_username is string
+      - vpn_gateway_openvpn_client_sp_password is string
+      - vpn_gateway_openvpn_client_ca is string
+      - vpn_gateway_openvpn_client_tls_key is string
+      - vpn_gateway_openvpn_client_cert is string
+      - vpn_gateway_openvpn_client_key is string
+
+# tasks file for vpn_gateway_openvpn_client
+- name: run openvpn unconfined
+  ansible.posix.seboolean:
+    name: openvpn_run_unconfined
+    state: true
+    persistent: true
+
+- name: enable openvpn-release-2.6 copr repository
+  community.general.copr:
+    state: enabled
+    name: dsommers/openvpn-release-2.6
+    chroot: epel-9-x86_64
+
+- name: install openvpn 2.6
+  ansible.builtin.dnf:
+    name: openvpn >= 2.6
+    state: present
+
+- name: create openvpn scripts directory
+  ansible.builtin.file:
+    path: /etc/openvpn/scripts
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+    seuser: system_u
+    serole: object_r
+    setype: openvpn_unconfined_script_exec_t
+
+- name: create azure private dns update script
+  ansible.builtin.template:
+    src: files/update-azure-private-dns.sh
+    dest: /etc/openvpn/scripts/update-azure-private-dns.sh
+    owner: root
+    group: root
+    mode: '0755'
+    seuser: system_u
+    serole: object_r
+    setype: openvpn_unconfined_script_exec_t
+
+- name: create openvpn client configuration file
+  ansible.builtin.template:
+    src: templates/client.conf.j2
+    dest: "/etc/openvpn/client/{{ vpn_gateway_openvpn_client_name }}.conf"
+    owner: root
+    group: root
+    mode: '0755'
+    seuser: system_u
+    serole: object_r
+    setype: openvpn_etc_t
+
+- name: install ca certificate
+  ansible.builtin.copy:
+    dest: "/etc/openvpn/client/{{ vpn_gateway_openvpn_client_name }}-ca.crt"
+    content: "{{ vpn_gateway_openvpn_client_ca }}"
+    owner: root
+    group: root
+    mode: '0644'
+    seuser: system_u
+    serole: object_r
+    setype: openvpn_etc_t
+
+- name: install client certificate
+  ansible.builtin.copy:
+    dest: "/etc/openvpn/client/{{ vpn_gateway_openvpn_client_name }}.crt"
+    content: "{{ vpn_gateway_openvpn_client_cert }}"
+    owner: root
+    group: root
+    mode: '0644'
+    seuser: system_u
+    serole: object_r
+    setype: openvpn_etc_t
+
+- name: install client key
+  ansible.builtin.copy:
+    dest: "/etc/openvpn/client/{{ vpn_gateway_openvpn_client_name }}.key"
+    content: "{{ vpn_gateway_openvpn_client_key }}"
+    owner: root
+    group: root
+    mode: '0600'
+    seuser: system_u
+    serole: object_r
+    setype: openvpn_etc_t
+
+- name: install client tls auth key
+  ansible.builtin.copy:
+    dest: "/etc/openvpn/client/{{ vpn_gateway_openvpn_client_name }}.tls"
+    content: "{{ vpn_gateway_openvpn_client_tls_key }}"
+    owner: root
+    group: root
+    mode: '0600'
+    seuser: system_u
+    serole: object_r
+    setype: openvpn_etc_t
+
+- name: create client systemd override directory
+  ansible.builtin.file:
+    path: "/etc/systemd/system/openvpn-client@{{ vpn_gateway_openvpn_client_name }}.service.d"
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+    seuser: system_u
+    serole: object_r
+    setype: systemd_unit_file_t
+
+- name: create client systemd override
+  ansible.builtin.copy:
+    src: files/vpn_unit_override.conf
+    dest: "/etc/systemd/system/openvpn-client@{{ vpn_gateway_openvpn_client_name }}.service.d/override.conf"
+    owner: root
+    group: root
+    mode: '0644'
+    seuser: system_u
+    serole: object_r
+    setype: systemd_unit_file_t

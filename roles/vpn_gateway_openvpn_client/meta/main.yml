@@ -1,0 +1,14 @@
+galaxy_info:
+  author: Samuli Seppänen
+  description: Set up Azure VPN Gateway OpenVPN client with automatic Azure Private DNS update
+  company: Puppeteers Oy
+  issue_tracker_url: https://github.com/Puppet-Finland/ansible-collection-azure/issues
+  license: BSD-2-Clause
+  min_ansible_version: 2.9
+  platforms:
+    - name: Redhat
+      versions:
+        - 9
+  galaxy_tags:
+    - azure
+dependencies: []

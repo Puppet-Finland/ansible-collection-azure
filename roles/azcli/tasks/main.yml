@@ -1,0 +1,14 @@
+---
+- name: set up azure-cli yum repository
+  ansible.builtin.yum_repository:
+    name: azure-cli
+    description: Azure CLI yum repository
+    baseurl: https://packages.microsoft.com/yumrepos/azure-cli
+    gpgcheck: yes
+    gpgkey: https://packages.microsoft.com/keys/microsoft.asc
+    enabled: yes
+
+- name: install azure-cli
+  ansible.builtin.dnf:
+    name: azure-cli
+    state: present

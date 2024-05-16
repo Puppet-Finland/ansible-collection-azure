@@ -1,0 +1,20 @@
+namespace: puppeteers
+name: azure
+version: 1.0.0
+readme: README.md
+authors:
+- Samuli Seppänen <samuli.seppanen@puppeteers.net>
+description: Various Azure roles
+license:
+- BSD-3-Clause
+license_file: ''
+tags:
+  - azure
+dependencies:
+  ansible.posix: '>=1.5.4 <2.0.0'
+  community.general: '>=8.6.0 <9.0.0'
+repository: https://github.com/Puppet-Finland/ansible-collection-azure.git
+documentation: https://github.com/Puppet-Finland/ansible-collection-azure/README.md
+homepage: https://github.com/Puppet-Finland/ansible-collection-azure
+issues: https://github.com/Puppet-Finland/ansible-collection-azure/issues
+build_ignore: []

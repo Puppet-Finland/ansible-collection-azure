@@ -131,3 +131,9 @@
     seuser: system_u
     serole: object_r
     setype: systemd_unit_file_t
+
+- name: Enable and start the OpenVPN service
+  ansible.builtin.service:
+    name: "openvpn-client@{{ vpn_gateway_openvpn_client_name }}"
+    enabled: yes
+    state: started

@@ -11,4 +11,6 @@
 - name: install azure-cli
   ansible.builtin.dnf:
     name: azure-cli
+    disablerepo: epel
+    enablerepo: azure-cli
     state: present

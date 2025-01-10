@@ -9,15 +9,34 @@
       - vpn_gateway_openvpn_client_rg is string
       - vpn_gateway_openvpn_client_zone_name is string
 
-- name: validate potentially encrypted parameters (may fail)
+- name: validate potentially encrypted variable (may fail)
   ansible.builtin.assert:
-    that:
-      - vpn_gateway_openvpn_client_sp_username is string
-      - vpn_gateway_openvpn_client_sp_password is string
-      - vpn_gateway_openvpn_client_ca is string
-      - vpn_gateway_openvpn_client_tls_key is string
-      - vpn_gateway_openvpn_client_cert is string
-      - vpn_gateway_openvpn_client_key is string
+    that: vpn_gateway_openvpn_client_sp_username is string
+  ignore_errors: true
+
+- name: validate potentially encrypted variable (may fail)
+  ansible.builtin.assert:
+    that: vpn_gateway_openvpn_client_sp_password is string
+  ignore_errors: true
+
+- name: validate potentially encrypted variable (may fail)
+  ansible.builtin.assert:
+    that: vpn_gateway_openvpn_client_ca is string
+  ignore_errors: true
+
+- name: validate potentially encrypted variable (may fail)
+  ansible.builtin.assert:
+    that: vpn_gateway_openvpn_client_tls_key is string
+  ignore_errors: true
+
+- name: validate potentially encrypted variable (may fail)
+  ansible.builtin.assert:
+    that: vpn_gateway_openvpn_client_cert is string
+  ignore_errors: true
+
+- name: validate potentially encrypted variable (may fail)
+  ansible.builtin.assert:
+    that: vpn_gateway_openvpn_client_key is string
   ignore_errors: true
 
 # tasks file for vpn_gateway_openvpn_client
